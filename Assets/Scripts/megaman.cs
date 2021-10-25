@@ -17,7 +17,7 @@ public class megaman : MonoBehaviour
     public bool shooting;
     private float shoot_time;
     public float time;
-    public GameObject point;
+    public Transform point;
 
 
     // Start is called before the first frame update
@@ -41,7 +41,7 @@ public class megaman : MonoBehaviour
     void correr()
     {
         float direccion = Input.GetAxis("Horizontal");
-        if (direccion != 0)
+        if (direccion != 0 && dash==false)
         {
             if (direccion < 0)
             {
@@ -83,51 +83,59 @@ public class megaman : MonoBehaviour
     }
     void Dash()
     {
-        if (Input.GetKey(KeyCode.X))
-        {
-            dasht += 1 * Time.deltaTime;
-            if (dasht < 0.35f)
-            {
-                dash = true;
-                myAnimator.SetBool("dash", true);
-                transform.Translate(Vector3.right * speeddash * Time.deltaTime);
-            }
 
+        if (ensuelo())
+        {
+            float direccion = transform.localScale.x;
+            if (Input.GetKey(KeyCode.X))
+            {
+                dasht += 1 * Time.deltaTime;
+                if (dasht < 0.35f)
+                {
+                    dash = true;
+                    myAnimator.SetBool("dash", true);
+                    transform.Translate(new Vector2(direccion * speeddash * Time.deltaTime,0));
+                }
+
+                else
+                {
+                    dash = false;
+                    myAnimator.SetBool("dash", false);
+                }
+            }
             else
             {
                 dash = false;
                 myAnimator.SetBool("dash", false);
+                dasht = 0;
             }
         }
-        else
-        {
-            dash = false;
-            myAnimator.SetBool("dash", false);
-            dasht = 0;
-        }
     }
+
     void Disparo()
     {
-        if (Input.GetKey(KeyCode.F))
+        float direccion = transform.localScale.x;
+        if (Input.GetKeyDown(KeyCode.F) && Time.time>=shoot_time)
         {
+
             shoot_time = 0.01f;
-            GameObject obj = Instantiate(bullet[0], point.transform.position, transform.rotation) as GameObject;
+            GameObject obj = Instantiate(bullet[0], point.position, transform.rotation) as GameObject;
             if (!shooting)
             {
                 shooting = true;
             }
-            if(shooting)
-                {
+            if (shooting)
+            {
                 shoot_time += 1 * Time.deltaTime;
                 myAnimator.SetLayerWeight(0, 0);
                 myAnimator.SetLayerWeight(1, 1);
             }
-            else 
+            else
             {
                 myAnimator.SetLayerWeight(0, 1);
                 myAnimator.SetLayerWeight(1, 0);
             }
-            if(shoot_time>= time)
+            if (shoot_time >= time)
             {
                 shooting = false;
                 shoot_time = 0;

@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class disparo : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject bullet;
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        shootbullet();
+    }
+    private void shootbullet()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Instantiate(bullet, transform.position, Quaternion.identity);
+
+        }
     }
 }
